@@ -1,7 +1,7 @@
 version: 2.1
 
 command:
-   delete_configuration:
+   destroy_environment:
     steps:
       - run:
          name: Destroy environment
