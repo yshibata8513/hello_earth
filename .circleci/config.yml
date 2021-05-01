@@ -1,22 +1,24 @@
 version: 2.1
 
+command:
+   delete_configuration:
+    steps:
+      - run:
+         name: Destroy environment
+         command: |
+          aws cloudformation delete-stack --stack-name 	my-stack-4
+
 jobs:
-  configure_infrastructure:
+  create_infrastructure:
     docker:
-      - image: python:3.7-alpine3.11
+      - image: amazon/aws-cli
     steps:
       - checkout
-      - add_ssh_keys:
-          fingerprints: ["d7:52:b5:74:41:95:de:92:54:a6:e2:82:1b:6e:52:b6"] # You can get this ID in the section where you registered the SSH Key
-      - run:
-          name: Install dependencies
-          command: |
-            apk add --update ansible # install the dependencies needed for your playbook
-      - run:
-          name: Configure server
-          command: |
-            ansible-playbook -i inventory.txt playbook.yml
+      - run: return 1
+      - destroy_environment
+        when: on_fail
 
+ 
 workflows:
   my_workflow:
     jobs:
