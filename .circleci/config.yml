@@ -3,13 +3,14 @@ version: 2.1
 jobs:
   my_job:
     docker:
-      - image: circleci/node:13.8.0
+      - image: amazon/aws-cli
     steps:
-      - run: return 0
       - run:
-          name: on error
-          command: echo "Hello Error!"
-          when: on_fail
+          name: execute template
+          command: |
+            aws cloudformation deploy \
+              --template-file template.yml \
+              --stack-name my-stack
 
 workflows:
   my_workflow:
