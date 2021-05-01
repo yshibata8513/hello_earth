@@ -1,20 +1,23 @@
 version: 2.1
 
 jobs:
-  my_job:
+  configure_infrastructure:
     docker:
-      - image: amazon/aws-cli
+      - image: python:3.7-alpine3.11
     steps:
       - checkout
+      - add_ssh_keys:
+          fingerprints: ["d7:52:b5:74:41:95:de:92:54:a6:e2:82:1b:6e:52:b6"] # You can get this ID in the section where you registered the SSH Key
       - run:
-          name: execute template
+          name: Install dependencies
           command: |
-            aws cloudformation deploy \
-              --template-file template.yml \
-              --stack-name my-stack-4
-
+            apk add --update ansible # install the dependencies needed for your playbook
+      - run:
+          name: Configure server
+          command: |
+            ansible-playbook -i inventory.txt playbook.yml
 
 workflows:
   my_workflow:
     jobs:
-      - my_job
+      - configure_infrastructure
